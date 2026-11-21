@@ -21,7 +21,7 @@ async function startCamera() {
   errorMessage.hidden = true;
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showError("Trình duyệt không hỗ trợ camera. Hãy mở trang bằng HTTPS trên trình duyệt mới.");
+    showError("Trình duyệt không hỗ trợ camera. Hãy mở trang bằng HTTPS trên trình duyệt mới.", "Camera không hỗ trợ");
     return;
   }
 
@@ -51,11 +51,11 @@ async function startCamera() {
       video.srcObject = null;
     }
     if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-      showError("Bạn chưa cấp quyền camera. Hãy cho phép camera trong trình duyệt rồi thử lại.");
+      showError("Bạn chưa cấp quyền camera. Hãy cho phép camera trong trình duyệt rồi thử lại.", "Cần quyền camera");
     } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
-      showError("Không tìm thấy camera trên thiết bị này.");
+      showError("Không tìm thấy camera trên thiết bị này.", "Không tìm thấy camera");
     } else {
-      showError("Không mở được camera. Hãy kiểm tra quyền camera và thử lại.");
+      showError("Không mở được camera. Hãy kiểm tra quyền camera và thử lại.", "Không mở được camera");
     }
     startButton.disabled = false;
     startButton.textContent = "Thử bật lại";
@@ -90,10 +90,10 @@ function stopCamera() {
   status.textContent = "Camera đã tắt";
 }
 
-function showError(message) {
+function showError(message, statusText = "Có lỗi") {
   errorMessage.textContent = message;
   errorMessage.hidden = false;
-  status.textContent = "Không mở được camera";
+  status.textContent = statusText;
 }
 
 function createCalibration(red, green, blue) {
@@ -146,7 +146,7 @@ function sampleColor(event) {
 
   if (calibrating) {
     if (Math.min(red, green, blue) < 70 || Math.max(red, green, blue) > 245) {
-      showError("Mẫu chưa phù hợp. Hãy dùng giấy trắng dưới ánh sáng đều, tránh quá tối hoặc lóa sáng.");
+      showError("Mẫu chưa phù hợp. Hãy dùng giấy trắng dưới ánh sáng đều, tránh quá tối hoặc lóa sáng.", "Mẫu chưa phù hợp");
       return;
     }
 
@@ -162,7 +162,7 @@ function sampleColor(event) {
 
   if (!colorCalibration) {
     beginCalibration();
-    showError("Trước tiên hãy cân bằng bằng giấy trắng dưới cùng nguồn sáng.");
+    showError("Trước tiên hãy cân bằng bằng giấy trắng dưới cùng nguồn sáng.", "Cần hiệu chuẩn");
     return;
   }
 
