@@ -93,6 +93,30 @@ video {
   object-fit: cover;
 }
 
+.spotlight {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: radial-gradient(
+    circle 76px at var(--spot-x, 50%) var(--spot-y, 50%),
+    transparent 0 26px,
+    rgb(2 6 23 / 0.72) 76px
+  );
+  pointer-events: none;
+}
+
+.spot-target {
+  position: absolute;
+  top: var(--spot-y, 50%);
+  left: var(--spot-x, 50%);
+  width: 62px;
+  height: 62px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #020617, 0 0 18px #fff8;
+  transform: translate(-50%, -50%);
+}
+
 .start-button,
 .calibrate-button,
 .stop-button {
@@ -106,6 +130,7 @@ video {
 
 .start-button {
   position: relative;
+  z-index: 2;
   background: #6366f1;
 }
 
@@ -116,6 +141,7 @@ video {
 
 .calibrate-button {
   position: absolute;
+  z-index: 3;
   top: 12px;
   right: 12px;
   max-width: calc(100% - 24px);
@@ -138,6 +164,7 @@ video {
 
 .stage-hint {
   position: absolute;
+  z-index: 2;
   right: 12px;
   bottom: 12px;
   left: 12px;
@@ -156,7 +183,7 @@ video {
   right: 16px;
   left: 16px;
   bottom: 16px;
-  z-index: 2;
+  z-index: 4;
   margin: 0;
   border-radius: 12px;
   padding: 12px;
@@ -164,6 +191,7 @@ video {
   color: white;
   font-size: 0.9rem;
   text-align: center;
+  pointer-events: none;
 }
 
 .result {

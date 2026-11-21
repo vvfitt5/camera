@@ -8,7 +8,7 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" href="./icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="./icon.svg">
-    <link rel="stylesheet" href="./styles.css?v=3">
+    <link rel="stylesheet" href="./styles.css?v=4">
     <title>Camera màu</title>
   </head>
   <body>
@@ -25,6 +25,9 @@
       <section class="camera-card" aria-label="Camera nhận diện màu">
         <div class="camera-stage" id="cameraStage">
           <video id="video" playsinline muted aria-label="Hình ảnh camera"></video>
+          <div class="spotlight" id="spotlight" aria-hidden="true" hidden>
+            <span class="spot-target"></span>
+          </div>
           <button class="start-button" id="startButton" type="button">Bật camera</button>
           <button class="calibrate-button" id="calibrateButton" type="button" disabled>Lấy mẫu giấy trắng</button>
           <p class="stage-hint" id="stageHint" hidden></p>
@@ -49,6 +52,6 @@
       <p class="privacy-note">Kết quả là ước tính; ánh sáng và camera có thể làm màu hiển thị khác thực tế. Hình ảnh chỉ xử lý trên thiết bị.</p>
       <canvas id="sampleCanvas" hidden></canvas>
     </main>
-    <script src="./app.js?v=3" defer></script>
+    <script src="./app.js?v=4" defer></script>
   </body>
 </html>

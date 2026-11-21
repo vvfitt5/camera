@@ -10,6 +10,7 @@ const swatch = document.querySelector("#swatch");
 const colorName = document.querySelector("#colorName");
 const colorHex = document.querySelector("#colorHex");
 const calibrationStatus = document.querySelector("#calibrationStatus");
+const spotlight = document.querySelector("#spotlight");
 const canvas = document.querySelector("#sampleCanvas");
 const context = canvas.getContext("2d", { willReadFrequently: true });
 
@@ -87,6 +88,7 @@ function stopCamera() {
   calibrating = false;
   colorCalibration = undefined;
   calibrationStatus.textContent = "Chưa hiệu chuẩn";
+  spotlight.hidden = true;
   status.textContent = "Camera đã tắt";
 }
 
@@ -114,6 +116,13 @@ function correctColor(red, green, blue, calibration) {
 
 function sampleColor(event) {
   if (!cameraStream || !video.videoWidth || !video.videoHeight) return;
+
+  const stageBounds = stage.getBoundingClientRect();
+  const spotX = ((event.clientX - stageBounds.left) / stageBounds.width) * 100;
+  const spotY = ((event.clientY - stageBounds.top) / stageBounds.height) * 100;
+  spotlight.style.setProperty("--spot-x", `${spotX}%`);
+  spotlight.style.setProperty("--spot-y", `${spotY}%`);
+  spotlight.hidden = false;
 
   const bounds = video.getBoundingClientRect();
   const scale = Math.max(bounds.width / video.videoWidth, bounds.height / video.videoHeight);
@@ -154,7 +163,7 @@ function sampleColor(event) {
     calibrating = false;
     errorMessage.hidden = true;
     calibrateButton.textContent = "Cân bằng lại";
-    stageHint.textContent = "Đã cân bằng. Chạm vào vật thể để xem màu";
+    stageHint.textContent = "Đã cân bằng. Chạm vào vật thể để xem màu; vùng ngoài vòng ngắm sẽ tối lại";
     calibrationStatus.textContent = "Đã hiệu chuẩn • hiệu chuẩn lại khi đổi ánh sáng";
     status.textContent = "Đã hiệu chuẩn";
     return;
