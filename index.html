@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="Dùng camera điện thoại để xem tên và mã màu của vật thể.">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Camera màu</title>
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">CÔNG CỤ NHẬN DIỆN MÀU</p>
+          <h1>Camera màu</h1>
+        </div>
+        <span class="live-status" id="status">Chưa bật camera</span>
+      </header>
+
+      <section class="camera-card" aria-label="Camera nhận diện màu">
+        <div class="camera-stage" id="cameraStage">
+          <video id="video" playsinline muted aria-label="Hình ảnh camera"></video>
+          <button class="start-button" id="startButton" type="button">Bật camera</button>
+          <p class="stage-hint" id="stageHint" hidden>Chạm vào vật thể để xem màu</p>
+          <p class="error-message" id="errorMessage" role="alert" hidden></p>
+        </div>
+        <div class="result" aria-live="polite">
+          <div class="swatch" id="swatch" aria-label="Mẫu màu chưa chọn"></div>
+          <div class="result-copy">
+            <p class="result-label" id="colorName">Chưa có màu</p>
+            <p class="result-hex" id="colorHex">Chạm vào hình ảnh camera</p>
+          </div>
+          <button class="stop-button" id="stopButton" type="button" hidden>Tắt</button>
+        </div>
+      </section>
+
+      <details class="help">
+        <summary>Cách thêm vào màn hình chính</summary>
+        <p><strong>Android:</strong> mở trang này bằng Chrome, chạm menu ⋮ rồi chọn “Cài đặt ứng dụng” hoặc “Thêm vào màn hình chính”.</p>
+        <p><strong>iPhone:</strong> mở bằng Safari, chạm nút Chia sẻ rồi chọn “Thêm vào màn hình chính”.</p>
+      </details>
+      <p class="privacy-note">Camera chỉ hoạt động khi bạn bật và hình ảnh không được gửi đi đâu.</p>
+      <canvas id="sampleCanvas" hidden></canvas>
+    </main>
+    <script src="./app.js" defer></script>
+  </body>
+</html>
