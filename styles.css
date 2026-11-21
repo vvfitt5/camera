@@ -37,6 +37,13 @@ summary {
   margin-bottom: 20px;
 }
 
+.intro {
+  margin: -7px 2px 18px;
+  color: #b7c3d8;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .eyebrow {
   margin: 0 0 5px;
   color: #a5b4fc;
@@ -87,15 +94,19 @@ video {
 }
 
 .start-button,
+.calibrate-button,
 .stop-button {
-  position: relative;
   z-index: 1;
   border: 0;
   border-radius: 14px;
-  background: #6366f1;
   color: white;
   font-weight: 750;
   cursor: pointer;
+}
+
+.start-button {
+  position: relative;
+  background: #6366f1;
 }
 
 .start-button {
@@ -103,7 +114,24 @@ video {
   box-shadow: 0 8px 26px #6366f155;
 }
 
+.calibrate-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  max-width: calc(100% - 24px);
+  border: 1px solid #ffffff30;
+  padding: 10px 13px;
+  background: #111827dd;
+  font-size: 0.8rem;
+}
+
+.calibrate-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .start-button:active,
+.calibrate-button:not(:disabled):active,
 .stop-button:active {
   transform: scale(0.98);
 }
@@ -161,7 +189,8 @@ video {
 }
 
 .result-label,
-.result-hex {
+.result-hex,
+.calibration-status {
   overflow: hidden;
   margin: 0;
   text-overflow: ellipsis;
@@ -178,6 +207,12 @@ video {
   color: #aebbd0;
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.85rem;
+}
+
+.calibration-status {
+  margin-top: 5px;
+  color: #a5b4fc;
+  font-size: 0.72rem;
 }
 
 .stop-button {

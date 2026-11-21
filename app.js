@@ -2,16 +2,20 @@ const video = document.querySelector("#video");
 const stage = document.querySelector("#cameraStage");
 const startButton = document.querySelector("#startButton");
 const stopButton = document.querySelector("#stopButton");
+const calibrateButton = document.querySelector("#calibrateButton");
 const stageHint = document.querySelector("#stageHint");
 const errorMessage = document.querySelector("#errorMessage");
 const status = document.querySelector("#status");
 const swatch = document.querySelector("#swatch");
 const colorName = document.querySelector("#colorName");
 const colorHex = document.querySelector("#colorHex");
+const calibrationStatus = document.querySelector("#calibrationStatus");
 const canvas = document.querySelector("#sampleCanvas");
 const context = canvas.getContext("2d", { willReadFrequently: true });
 
 let cameraStream;
+let colorCalibration;
+let calibrating = false;
 
 async function startCamera() {
   errorMessage.hidden = true;
@@ -30,10 +34,16 @@ async function startCamera() {
     });
     video.srcObject = cameraStream;
     await video.play();
+    colorCalibration = undefined;
+    calibrating = true;
     startButton.hidden = true;
     stopButton.hidden = false;
     stageHint.hidden = false;
-    status.textContent = "Camera đang bật";
+    calibrateButton.disabled = false;
+    calibrateButton.textContent = "Lấy mẫu giấy trắng";
+    stageHint.textContent = "Chạm vào giấy trắng dưới cùng nguồn sáng để hiệu chuẩn";
+    calibrationStatus.textContent = "Cần hiệu chuẩn ánh sáng";
+    status.textContent = "Cần hiệu chuẩn";
   } catch (error) {
     if (cameraStream) {
       cameraStream.getTracks().forEach((track) => track.stop());
@@ -49,7 +59,17 @@ async function startCamera() {
     }
     startButton.disabled = false;
     startButton.textContent = "Thử bật lại";
+    calibrateButton.disabled = true;
   }
+}
+
+function beginCalibration() {
+  if (!cameraStream) return;
+  errorMessage.hidden = true;
+  calibrating = true;
+  stageHint.textContent = "Hướng camera vào giấy trắng rồi chạm lên giấy";
+  calibrationStatus.textContent = "Đang chờ mẫu giấy trắng";
+  status.textContent = "Đang hiệu chuẩn";
 }
 
 function stopCamera() {
@@ -62,7 +82,11 @@ function stopCamera() {
   startButton.disabled = false;
   startButton.textContent = "Bật camera";
   stopButton.hidden = true;
+  calibrateButton.disabled = true;
   stageHint.hidden = true;
+  calibrating = false;
+  colorCalibration = undefined;
+  calibrationStatus.textContent = "Chưa hiệu chuẩn";
   status.textContent = "Camera đã tắt";
 }
 
@@ -70,6 +94,22 @@ function showError(message) {
   errorMessage.textContent = message;
   errorMessage.hidden = false;
   status.textContent = "Không mở được camera";
+}
+
+function createCalibration(red, green, blue) {
+  return {
+    red: Math.min(3, 220 / red),
+    green: Math.min(3, 220 / green),
+    blue: Math.min(3, 220 / blue),
+  };
+}
+
+function correctColor(red, green, blue, calibration) {
+  return {
+    red: Math.min(255, Math.round(red * calibration.red)),
+    green: Math.min(255, Math.round(green * calibration.green)),
+    blue: Math.min(255, Math.round(blue * calibration.blue)),
+  };
 }
 
 function sampleColor(event) {
@@ -91,25 +131,50 @@ function sampleColor(event) {
   canvas.height = height;
   context.drawImage(video, left, top, width, height, 0, 0, width, height);
   const pixels = context.getImageData(0, 0, width, height).data;
-  let red = 0;
-  let green = 0;
-  let blue = 0;
-  const count = pixels.length / 4;
+  const channels = [[], [], []];
 
   for (let index = 0; index < pixels.length; index += 4) {
-    red += pixels[index];
-    green += pixels[index + 1];
-    blue += pixels[index + 2];
+    channels[0].push(pixels[index]);
+    channels[1].push(pixels[index + 1]);
+    channels[2].push(pixels[index + 2]);
   }
 
-  red = Math.round(red / count);
-  green = Math.round(green / count);
-  blue = Math.round(blue / count);
-  const hex = `#${[red, green, blue].map((value) => value.toString(16).padStart(2, "0")).join("").toUpperCase()}`;
+  const [red, green, blue] = channels.map((channel) => {
+    channel.sort((a, b) => a - b);
+    return channel[Math.floor(channel.length / 2)];
+  });
+
+  if (calibrating) {
+    if (Math.min(red, green, blue) < 70 || Math.max(red, green, blue) > 245) {
+      showError("Mẫu chưa phù hợp. Hãy dùng giấy trắng dưới ánh sáng đều, tránh quá tối hoặc lóa sáng.");
+      return;
+    }
+
+    colorCalibration = createCalibration(red, green, blue);
+    calibrating = false;
+    errorMessage.hidden = true;
+    calibrateButton.textContent = "Cân bằng lại";
+    stageHint.textContent = "Đã cân bằng. Chạm vào vật thể để xem màu";
+    calibrationStatus.textContent = "Đã hiệu chuẩn • hiệu chuẩn lại khi đổi ánh sáng";
+    status.textContent = "Đã hiệu chuẩn";
+    return;
+  }
+
+  if (!colorCalibration) {
+    beginCalibration();
+    showError("Trước tiên hãy cân bằng bằng giấy trắng dưới cùng nguồn sáng.");
+    return;
+  }
+
+  const corrected = correctColor(red, green, blue, colorCalibration);
+  const correctedRed = corrected.red;
+  const correctedGreen = corrected.green;
+  const correctedBlue = corrected.blue;
+  const hex = `#${[correctedRed, correctedGreen, correctedBlue].map((value) => value.toString(16).padStart(2, "0")).join("").toUpperCase()}`;
 
   swatch.style.background = hex;
   swatch.setAttribute("aria-label", `Mẫu màu ${hex}`);
-  colorName.textContent = getColorName(red, green, blue);
+  colorName.textContent = getColorName(correctedRed, correctedGreen, correctedBlue);
   colorHex.textContent = hex;
 }
 
@@ -148,6 +213,10 @@ function getColorName(red, green, blue) {
 
 startButton.addEventListener("click", startCamera);
 stopButton.addEventListener("click", stopCamera);
+calibrateButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+  beginCalibration();
+});
 stage.addEventListener("click", sampleColor);
 window.addEventListener("pagehide", stopCamera);
 

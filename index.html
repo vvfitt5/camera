@@ -20,12 +20,14 @@
         </div>
         <span class="live-status" id="status">Chưa bật camera</span>
       </header>
+      <p class="intro">Hiệu chuẩn bằng giấy trắng để giảm sai lệch do ánh sáng trước khi đo màu.</p>
 
       <section class="camera-card" aria-label="Camera nhận diện màu">
         <div class="camera-stage" id="cameraStage">
           <video id="video" playsinline muted aria-label="Hình ảnh camera"></video>
           <button class="start-button" id="startButton" type="button">Bật camera</button>
-          <p class="stage-hint" id="stageHint" hidden>Chạm vào vật thể để xem màu</p>
+          <button class="calibrate-button" id="calibrateButton" type="button" disabled>Lấy mẫu giấy trắng</button>
+          <p class="stage-hint" id="stageHint" hidden></p>
           <p class="error-message" id="errorMessage" role="alert" hidden></p>
         </div>
         <div class="result" aria-live="polite">
@@ -33,6 +35,7 @@
           <div class="result-copy">
             <p class="result-label" id="colorName">Chưa có màu</p>
             <p class="result-hex" id="colorHex">Chạm vào hình ảnh camera</p>
+            <p class="calibration-status" id="calibrationStatus">Chưa hiệu chuẩn</p>
           </div>
           <button class="stop-button" id="stopButton" type="button" hidden>Tắt</button>
         </div>
@@ -43,7 +46,7 @@
         <p><strong>Android:</strong> mở trang này bằng Chrome, chạm menu ⋮ rồi chọn “Cài đặt ứng dụng” hoặc “Thêm vào màn hình chính”.</p>
         <p><strong>iPhone:</strong> mở bằng Safari, chạm nút Chia sẻ rồi chọn “Thêm vào màn hình chính”.</p>
       </details>
-      <p class="privacy-note">Camera chỉ hoạt động khi bạn bật và hình ảnh không được gửi đi đâu.</p>
+      <p class="privacy-note">Kết quả là ước tính; ánh sáng và camera có thể làm màu hiển thị khác thực tế. Hình ảnh chỉ xử lý trên thiết bị.</p>
       <canvas id="sampleCanvas" hidden></canvas>
     </main>
     <script src="./app.js" defer></script>

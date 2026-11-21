@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-mau-v1";
+const CACHE_NAME = "camera-mau-v2";
 const APP_FILES = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
